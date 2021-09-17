@@ -1,0 +1,48 @@
+<div class="container">
+
+
+<button mat-button color="primary" (click)="openDialog(null)">Adicionar</button>
+
+<table mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="ide">
+      <th mat-header-cell *matHeaderCellDef> IDE </th>
+      <td mat-cell *matCellDef="let element"> {{element.ide}} </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="tecnologia">
+      <th mat-header-cell *matHeaderCellDef> Tecnologia </th>
+      <td mat-cell *matCellDef="let element"> {{element.tecnologia}} </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="versao">
+      <th mat-header-cell *matHeaderCellDef> Versão </th>
+      <td mat-cell *matCellDef="let element"> {{element.versao}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> action </th>
+        <td mat-cell *matCellDef="let element"> 
+              <button mat-icon-button aria-label="" (click)="editElement(element)" color="primary">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-icon-button color="primary"  (click)="deleteElement(element.position)" aria-label="">
+                <mat-icon>delete</mat-icon>
+              </button>
+        </td>
+      </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+  

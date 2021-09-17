@@ -1,0 +1,25 @@
+<h1 *ngIf="!isChange" mat-dialog-title>Criar</h1>
+<h1 *ngIf="isChange" mat-dialog-title>Editar</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Position</mat-label>
+    <input matInput [(ngModel)]="data.position">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>IDE</mat-label>
+    <input matInput [(ngModel)]="data.ide">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Tecnologia</mat-label>
+    <input matInput [(ngModel)]="data.tecnologia">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Versão</mat-label>
+    <input matInput [(ngModel)]="data.versao">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">cancel</button>
+  <button mat-button *ngIf="!isChange" [mat-dialog-close]="data" cdkFocusInitial>Create</button>
+  <button mat-button *ngIf="isChange" [mat-dialog-close]="data" cdkFocusInitial>Editar</button>
+</div>
