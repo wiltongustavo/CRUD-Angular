@@ -2,27 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ElementDialogComponent } from 'src/app/shared/element-dialog/element-dialog.component';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AppService } from 'src/app/service/service';
+import { Model } from './todoModel';
+import { FormGroup } from '@angular/forms';
 
-export interface PeriodicElement {
-  ide: string;
-  position: number;
-  tecnologia: string;
-  versao: string;
-}
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, ide: 'eclipse', tecnologia: 'java', versao: '1.5'},
-  {position: 2, ide: 'eclipse', tecnologia: 'cobol', versao: '2.3'},
-  {position: 3, ide: 'eclipse', tecnologia: 'C++', versao: '2.5'},
-  {position: 4, ide: 'eclipse', tecnologia:'C#', versao: '2.0'},
-  {position: 5, ide: 'eclipse', tecnologia: 'java', versao: '2.1'},
-  {position: 6, ide: 'eclipse', tecnologia: 'java', versao: '1.8'},
-  {position: 7, ide: 'eclipse', tecnologia: 'java', versao: '2.5'},
-  {position: 8, ide: 'eclipse', tecnologia: 'java', versao: '2.5'},
-  {position: 9, ide: 'eclipse', tecnologia: 'Phyton', versao: '2.5'},
-  {position: 10, ide: 'eclipse', tecnologia: 'Ruby', versao: '2.5'},
-];
 
+
+console.log("teste")
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -31,49 +19,86 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class HomeComponent implements OnInit {
   @ViewChild(MatTable)
   table!: MatTable<any>
-  displayedColumns: string[] = ['position', 'ide', 'tecnologia', 'versao', 'actions'];
-  dataSource = ELEMENT_DATA;
+  displayedColumns: string[] = [ 'posicao', 'ide', 'tecnologia', 'versao', 'actions'];
+ public form: FormGroup
+  tasks: Model[]=[];
+  task!: Model;
 
-  constructor(public dialog: MatDialog) { }
+  
+  constructor(public dialog: MatDialog, private http: HttpClient, private service: AppService) {
+    this.service.findAll().subscribe(data => {
+      this.tasks = data;
+      console.log(this.tasks)
+    })
+    this.tasks = this.tasks
+
+    this.load();
+   }
 
   ngOnInit(): void {
+    this.service.findAll().subscribe(data => {
+      this.tasks = data;
+      console.log(this.tasks)
+    })
+    this.tasks = this.tasks
   }
-  openDialog(element: PeriodicElement | null): void {
+  
+  openDialog(tasks: Model | null): void {
     const dialogRef = this.dialog.open(ElementDialogComponent, {
       width: '250px',
-      data: element === null ? {
-        position: null,
+      data: tasks === null ? {
+        id: null,
+        posicao: '',
         ide: '',
         tecnologia: '',
         versao: ''
       }: {
-        position: element.position,
-        ide: element.ide,
-        tecnologia: element.tecnologia,
-        versao: element.versao
+        id: tasks.id,
+        posicao: tasks.posicao,
+        ide: tasks.ide,
+        tecnologia: tasks.tecnologia,
+        versao: tasks.versao
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
      if(result !== undefined){
-       if(this,this.dataSource.map(p => p.position).includes(result.position)){
-         this.dataSource[result.position - 1] = result;
-         this.table.renderRows();
+       if(this,this.tasks.map(p => p.id).includes(result.id)){
+         this.tasks[result.id - 1] = result;
+         window.location.reload();
        }else{
-        this.dataSource.push(result);
-        this.table.renderRows();
+        
+        window.location.reload();
+       
        }
         
      }
     });
   }
 
-  deleteElement(position:number): void{
-    this.dataSource = this.dataSource.filter(p => p.position !== position)
+  deleteElement(id:number): void{
+    //this.dataSource = this.dataSource.filter(p => p.position !== position)
+    this.service.delete(id).subscribe(data => {
+      this.load();
+    
+    })
+
+    
   }
 
-  editElement(element: PeriodicElement): void{
-    this.openDialog(element);
+  editElement(tasks: Model){
+    this.openDialog(tasks);
+    
   }
+
+
+  load() {
+    this.service.findAll().subscribe(
+      response => {
+        this.tasks = response;
+      }
+    );
+  }
+
 
 }
